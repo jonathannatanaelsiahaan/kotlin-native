@@ -188,12 +188,12 @@ class TargetManager(val userRequest: String? = null) {
             when (host) {
                 KonanTarget.LINUX   -> {
                     KonanTarget.LINUX.enabled = true
-                    /*KonanTarget.RASPBERRYPI.enabled = true
+                    KonanTarget.RASPBERRYPI.enabled = true
                     KonanTarget.LINUX_MIPS32.enabled = true
                     KonanTarget.LINUX_MIPSEL32.enabled = true
                     KonanTarget.ANDROID_ARM32.enabled = true
                     KonanTarget.ANDROID_ARM64.enabled = true
-                    KonanTarget.WASM32.enabled = true*/
+                    KonanTarget.WASM32.enabled = true
                     KonanTarget.ZEPHYR.enabled = true
                 }
                 KonanTarget.MINGW -> {
@@ -207,6 +207,7 @@ class TargetManager(val userRequest: String? = null) {
                     KonanTarget.ANDROID_ARM32.enabled = true
                     KonanTarget.ANDROID_ARM64.enabled = true
                     KonanTarget.WASM32.enabled = true
+                    KonanTarget.ZEPHYR.enabled = true
                 }
                 else ->
                     throw TargetSupportException("Unknown host platform: $host")

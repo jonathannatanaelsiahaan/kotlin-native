@@ -7,7 +7,5 @@
 #include <zephyr.h>
 #include <misc/printk.h>
 
-void main(void)
-{
-	printk("Hello World! %s\n", CONFIG_ARCH);
-}
+extern int Konan_main(int argc, const char** argv);
+

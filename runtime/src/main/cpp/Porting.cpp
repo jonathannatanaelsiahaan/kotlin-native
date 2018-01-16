@@ -32,6 +32,7 @@
 
 #include <chrono>
 
+#include "Common.h"
 #include "Porting.h"
 
 #if KONAN_WASM || __ZEPHYR__
@@ -70,9 +71,13 @@ void consoleErrorUtf8(const void* utf8, uint32_t sizeBytes) {
 }
 
 uint32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
+#ifdef __ZEPHYR__
+  return 0;
+#else 
   char* result = ::fgets(reinterpret_cast<char*>(utf8), maxSizeBytes - 1, stdin);
   if (result == nullptr) return 0;
   return ::strlen(result);
+#endif
 }
 
 #if KONAN_INTERNAL_SNPRINTF
@@ -141,7 +146,7 @@ void onThreadExit(void (*destructor)()) {
 }
 
 // Process execution.
-void abort() {
+void abort(void) {
   ::abort();
 }
 
@@ -180,20 +185,26 @@ int snprintf(char* buffer, size_t size, const char* format, ...) {
   return rv;
 }
 
-#if !__ZEPHYR__
+
 size_t strnlen(const char* buffer, size_t maxSize) {
+#if __ZEPHYR__
+  return strnlen(buffer, maxSize);
+#else
   return ::strnlen(buffer, maxSize);
-}
 #endif
+}
 
 // Memory operations.
 #if KONAN_INTERNAL_DLMALLOC
 extern "C" void* dlcalloc(size_t, size_t);
+extern "C" void* dlrealloc(void*, size_t);
 extern "C" void dlfree(void*);
 #define calloc_impl dlcalloc
+#define realloc_impl dlrealloc
 #define free_impl dlfree
 #else
 #define calloc_impl ::calloc
+//#define realloc_impl ::realloc
 #define free_impl ::free
 #endif
 
@@ -201,13 +212,25 @@ void* calloc(size_t count, size_t size) {
   return calloc_impl(count, size);
 }
 
+#if KONAN_INTERNAL_DLMALLOC
+void* realloc(void* ptr, size_t size) {
+  return realloc_impl(ptr, size);
+}
+#endif
+
 void free(void* pointer) {
   free_impl(pointer);
 }
 
 #if KONAN_INTERNAL_NOW
 
+#ifdef __ZEPHYR__
+void Konan_date_now(uint64_t* arg) {
+    //return 0;
+}
+#else
 extern "C" void Konan_date_now(uint64_t*);
+#endif
 
 uint64_t getTimeMillis() {
     uint64_t now;
@@ -243,7 +266,7 @@ uint64_t getTimeMicros() {
 #if KONAN_INTERNAL_DLMALLOC
 // This function is being called when memory allocator needs more RAM.
 
-#if KONAN_WASM || __ZEPHYR__
+#if KONAN_WASM
 
 // This one is an interface to query module.env.memory.buffer.byteLength
 extern "C" unsigned long Konan_heap_upper();
@@ -304,10 +327,15 @@ long getpagesize() {
 }  // namespace konan
 
 extern "C" {
+// TODO: get rid of these.
 #if KONAN_WASM || __ZEPHYR__
-
-    // TODO: get rid of these.
+    void _ZNKSt3__120__vector_base_commonILb1EE20__throw_length_errorEv(void) {
+        Konan_abort("TODO: throw_length_error not implemented.");
+    }
     void _ZNKSt3__220__vector_base_commonILb1EE20__throw_length_errorEv(void) {
+        Konan_abort("TODO: throw_length_error not implemented.");
+    }
+    void _ZNKSt3__121__basic_string_commonILb1EE20__throw_length_errorEv(void) {
         Konan_abort("TODO: throw_length_error not implemented.");
     }
     void _ZNKSt3__221__basic_string_commonILb1EE20__throw_length_errorEv(void) {
@@ -336,6 +364,9 @@ extern "C" {
         }
         return prime;
     }
+    int _ZNSt3__112__next_primeEj(unsigned long n) {
+        return _ZNSt3__212__next_primeEj(n);
+    }
     void __assert_fail(const char * assertion, const char * file, unsigned int line, const char * function) {
         char buf[1024];
         konan::snprintf(buf, sizeof(buf), "%s:%d in %s: runtime assert: %s\n", file, line, function, assertion);
@@ -351,9 +382,10 @@ extern "C" {
     double pow(double x, double y) {
         return __builtin_pow(x, y);
     }
+#endif
 
+#if KONAN_WASM
     // Some string.h functions.
-
     void *memcpy(void *dst, const void *src, size_t n) {
         for (long i = 0; i != n; ++i)
             *((char*)dst + i) = *((char*)src + i);
@@ -402,59 +434,19 @@ extern "C" {
 #endif
 
 #if __ZEPHYR__
-
-    /* Support the alias for the __aeabi_memcpy which may
-       assume memory alignment.  */
-    void __aeabi_memcpy4 (void *dest, const void *source, size_t n)
-        __attribute__ ((alias ("memcpy")));
-
-    void __aeabi_memcpy8 (void *dest, const void *source, size_t n)
-        __attribute__ ((alias ("memcpy")));
-
-    void __aeabi_memcpy (void *dest, const void *source, size_t n)
-        __attribute__ ((alias ("memcpy")));
-
-    /* Support the alias for the __aeabi_memmove which may
-       assume memory alignment.  */
-    void __aeabi_memmove4 (void *dest, const void *source, size_t n)
-        __attribute__ ((alias ("memmove")));
-
-    void __aeabi_memmove8 (void *dest, const void *source, size_t n)
-        __attribute__ ((alias ("memmove")));
-
-    void __aeabi_memmove (void *dest, const void *source, size_t n)
-        __attribute__ ((alias ("memmove")));
-
-    /* Support the alias for the __aeabi_memset which may
-       assume memory alignment.  */
-    void __aeabi_memset4 (void *dest, size_t n, int c)
-        __attribute__ ((alias ("__aeabi_memset")));
-
-    void __aeabi_memset8 (void *dest, size_t n, int c)
-        __attribute__ ((alias ("__aeabi_memset")));
-
-    /* Support the routine __aeabi_memset.  Can't alias to memset
-       because it's not defined in the same translation unit.  */
-    void __aeabi_memset (void *dest, size_t n, int c)
-    {
-      /*Note that relative to ANSI memset, __aeabi_memset hase the order
-        of its second and third arguments reversed.  */
-      memset (dest, c, n);
+    RUNTIME_USED void Konan_abort(const char*) {
+        // Empty
     }
+RUNTIME_USED unsigned long Konan_heap_upper() {
+    return 0x1000000;
+}
 
-    /* Support the alias for the __aeabi_memclr which may
-       assume memory alignment.  */
-    void __aeabi_memclr4 (void *dest, size_t n)
-        __attribute__ ((alias ("__aeabi_memclr")));
+RUNTIME_USED unsigned long Konan_heap_lower() {
+    return 0x100000;
+}
 
-    void __aeabi_memclr8 (void *dest, size_t n)
-        __attribute__ ((alias ("__aeabi_memclr")));
-
-    /* Support the routine __aeabi_memclr.  */
-    void __aeabi_memclr (void *dest, size_t n)
-    {
-      __aeabi_memset (dest, n, 0);
-    }
-
-#endif
+RUNTIME_USED unsigned long Konan_heap_grow(unsigned long) {
+    return 0x1000000;
+}
+#endif // __ZEPHYR__
 }

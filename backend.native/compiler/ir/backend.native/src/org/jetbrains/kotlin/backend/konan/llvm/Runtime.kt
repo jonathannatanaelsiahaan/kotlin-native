@@ -48,7 +48,7 @@ class Runtime(bitcodeFile: String) {
 
     // TODO: deduce TLS model from explicit config parameter.
     val tlsMode by lazy {
-        if (target.indexOf("wasm") != -1) LLVMThreadLocalMode.LLVMNotThreadLocal
+        if (target.indexOf("wasm") != -1 || target.indexOf("zephyr") != -1) LLVMThreadLocalMode.LLVMNotThreadLocal
         else LLVMThreadLocalMode.LLVMGeneralDynamicTLSModel
     }
     val dataLayout = LLVMGetDataLayout(llvmModule)!!.toKString()

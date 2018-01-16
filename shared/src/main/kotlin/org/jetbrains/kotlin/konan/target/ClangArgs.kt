@@ -82,13 +82,13 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-Xclang", "-isystem$absoluteTargetSysRoot/include/compat", "-Xclang", "-isystem$absoluteTargetSysRoot/include/libc")
 
             KonanTarget.ZEPHYR ->
-                listOf("-target", targetArg!!, "-mabi=aapcs", "-mthumb", "-mcpu=cortex-m3",
+                listOf("-target", targetArg!!, "-mabi=aapcs", "-mthumb", "-mcpu=cortex-m4", "-ffunction-sections", "-fdata-sections",
                         "-Os", "-g",
                         "-D__ZEPHYR__=1",
                         "-DKONAN_NO_FFI=1",
                         "-DKONAN_NO_THREADS=1",
                         "-DKONAN_NO_EXCEPTIONS=1",
-                        "-DKONAN_INTERNAL_DLMALLOC=1",
+                        //"-DKONAN_INTERNAL_DLMALLOC=1",
                         "-DKONAN_INTERNAL_SNPRINTF=1",
                         "-DKONAN_INTERNAL_NOW=1",
                         "-fno-rtti",

@@ -84,16 +84,16 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             KonanTarget.ZEPHYR ->
                 listOf("-target", targetArg!!, "-mabi=aapcs", "-mthumb", "-mcpu=cortex-m4", "-ffunction-sections", "-fdata-sections",
                         "-Os", "-g",
-                                            "-fno-rtti",
+                        "-fno-rtti",
                         "-fno-exceptions",
                         "-fno-asynchronous-unwind-tables",
                         "-fno-pie",
                         "-fno-pic",
                         "-nostdinc",
-                        "-isystem$sysRoot/include/libcxx",
-                        "-isystem$sysRoot/lib/libcxxabi/include",
-                        "-isystem$sysRoot/include/compat",
-                        "-isystem$sysRoot/include/libc")
+                        "-isystem$absoluteTargetSysRoot/include/libcxx",
+                        "-isystem$absoluteTargetSysRoot/lib/libcxxabi/include",
+                        "-isystem$absoluteTargetSysRoot/include/compat",
+                        "-isystem$absoluteTargetSysRoot/include/libc")
         }
         return result
     }

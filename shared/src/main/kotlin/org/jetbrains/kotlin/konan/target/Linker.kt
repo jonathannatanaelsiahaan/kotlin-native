@@ -288,7 +288,7 @@ open class WasmLinker(targetProperties: WasmConfigurables)
 open class ZephyrLinker(targetProperties: ZephyrConfigurables)
     : LinkerFlags(targetProperties), ZephyrConfigurables by targetProperties {
 
-    private val linker = "$targetToolchain/bin/ld"
+    private val linker = "$absoluteTargetToolchain/bin/ld"
 
     override val useCompilerDriverAsLinker: Boolean get() = false
 
@@ -318,5 +318,7 @@ fun linker(configurables: Configurables): LinkerFlags  =
             MingwLinker(configurables as MingwConfigurables)
         KonanTarget.WASM32 ->
             WasmLinker(configurables as WasmConfigurables)
+        KonanTarget.ZEPHYR ->
+            ZephyrLinker(configurables as ZephyrConfigurables)
     }
 

@@ -434,6 +434,10 @@ extern "C" {
 #endif
 
 #if __ZEPHYR__
+    RUNTIME_USED void Konan_abort(const char*) {
+        // Do nothing.
+    }
+
     /* Support the alias for the __aeabi_memset which may
        assume memory alignment.  */
     RUNTIME_USED void __aeabi_memset4 (void *dest, size_t n, int c)

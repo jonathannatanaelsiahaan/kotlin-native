@@ -78,3 +78,8 @@ interface AndroidConfigurables : NonAppleConfigurables
 interface WasmConfigurables : NonAppleConfigurables {
     val s2wasmFlags get() = targetList("s2wasmFlags")
 }
+
+interface ZephyrConfigurables : NonAppleConfigurables {
+    val board get() = targetList("board")
+}
+

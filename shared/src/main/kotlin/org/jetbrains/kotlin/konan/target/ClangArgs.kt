@@ -84,14 +84,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             KonanTarget.ZEPHYR ->
                 listOf("-target", targetArg!!, "-mabi=aapcs", "-mthumb", "-mcpu=cortex-m4", "-ffunction-sections", "-fdata-sections",
                         "-Os", "-g",
-                        "-D__ZEPHYR__=1",
-                        "-DKONAN_NO_FFI=1",
-                        "-DKONAN_NO_THREADS=1",
-                        "-DKONAN_NO_EXCEPTIONS=1",
-                        //"-DKONAN_INTERNAL_DLMALLOC=1",
-                        "-DKONAN_INTERNAL_SNPRINTF=1",
-                        "-DKONAN_INTERNAL_NOW=1",
-                        "-fno-rtti",
+                                            "-fno-rtti",
                         "-fno-exceptions",
                         "-fno-asynchronous-unwind-tables",
                         "-fno-pie",
@@ -139,6 +132,10 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         KonanTarget.WASM32 ->
             listOf("-DKONAN_WASM=1", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1",
                     "-DKONAN_INTERNAL_DLMALLOC=1", "-DKONAN_INTERNAL_SNPRINTF=1", "-DKONAN_INTERNAL_NOW=1")
+        KonanTarget.ZEPHYR ->
+            listOf("-D__ZEPHYR__=1", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1", 
+            //"-DKONAN_INTERNAL_DLMALLOC=1",
+            "-DKONAN_INTERNAL_SNPRINTF=1", "-DKONAN_INTERNAL_NOW=1")
     }
 
     private val host = TargetManager.host

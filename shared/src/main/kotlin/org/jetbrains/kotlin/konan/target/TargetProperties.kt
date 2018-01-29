@@ -35,3 +35,11 @@ fun Properties.hostTargetString(name: String, target: KonanTarget): String?
 
 fun Properties.hostTargetList(name: String, target: KonanTarget): List<String>
     = this.propertyList(name, hostTargetSuffix(TargetManager.host, target))
+/*
+fun Properties.subTargetString(name: String, target: KonanTarget): String?
+    = this.propertyString(name, target.subName)
+
+fun Properties.subTargetList(name: String, target: KonanTarget): List<String>
+    = this.propertyList(name, target.subName)
+
+*/

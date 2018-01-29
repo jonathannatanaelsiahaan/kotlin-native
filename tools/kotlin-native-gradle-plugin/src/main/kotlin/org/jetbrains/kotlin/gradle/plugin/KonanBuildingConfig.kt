@@ -28,6 +28,7 @@ import org.gradle.internal.reflect.Instantiator
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanBuildingTask
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.enabled
 import org.jetbrains.kotlin.konan.target.TargetManager
 import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.File

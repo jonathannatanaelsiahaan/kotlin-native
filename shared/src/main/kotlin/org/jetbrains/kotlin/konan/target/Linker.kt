@@ -318,7 +318,7 @@ fun linker(configurables: Configurables): LinkerFlags  =
             MingwLinker(configurables as MingwConfigurables)
         KonanTarget.WASM32 ->
             WasmLinker(configurables as WasmConfigurables)
-        KonanTarget.ZEPHYR ->
+        is KonanTarget.ZEPHYR ->
             ZephyrLinker(configurables as ZephyrConfigurables)
     }
 

@@ -66,6 +66,7 @@ allprojects {
 void setupHostAndTarget() {
     ext.hostName = TargetManager.hostName
     ext.targetList = TargetManager.enabled.collect { it.visibleName } as List
+    ext.konanTargetList = TargetManager.enabled as List
 }
 
 void setupClang(Project project) {

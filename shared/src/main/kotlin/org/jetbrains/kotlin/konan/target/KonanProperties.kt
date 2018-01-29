@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.konan.util.DependencyProcessor
 interface TargetableExternalStorage {
     fun targetString(key: String): String? 
     fun targetList(key: String): List<String> 
+    //fun subTargetString(key: String): String? 
+    //fun subTargetList(key: String): List<String> 
     fun hostString(key: String): String? 
     fun hostList(key: String): List<String> 
     fun hostTargetString(key: String): String? 
@@ -50,6 +52,12 @@ open class KonanPropertiesLoader(override val target: KonanTarget, val propertie
         = properties.hostTargetString(key, target)
     override fun hostTargetList(key: String): List<String> 
         = properties.hostTargetList(key, target)
+/*
+    override fun subTargetString(key: String): String? 
+        = properties.subTargetString(key, target)
+    override fun subTargetList(key: String): List<String> 
+        = properties.subTargetList(key, target)
+*/
     override fun absolute(value: String?): String =
             dependencyProcessor!!.resolveRelative(value!!).absolutePath
     private val dependencyProcessor  by lazy {

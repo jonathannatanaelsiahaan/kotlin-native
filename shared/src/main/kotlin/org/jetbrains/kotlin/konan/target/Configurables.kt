@@ -80,6 +80,6 @@ interface WasmConfigurables : NonAppleConfigurables {
 }
 
 interface ZephyrConfigurables : NonAppleConfigurables {
-    val board get() = targetList("board")
+    val boardSpecificClangFlags get() = targetList("boardSpecificClangFlags")
 }
 

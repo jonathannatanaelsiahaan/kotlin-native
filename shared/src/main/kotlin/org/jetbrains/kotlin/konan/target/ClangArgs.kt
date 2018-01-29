@@ -81,8 +81,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-Xclang", "-isystem$absoluteTargetSysRoot/include/libcxx", "-Xclang", "-isystem$absoluteTargetSysRoot/lib/libcxxabi/include",
                         "-Xclang", "-isystem$absoluteTargetSysRoot/include/compat", "-Xclang", "-isystem$absoluteTargetSysRoot/include/libc")
 
-            KonanTarget.ZEPHYR ->
-                listOf("-target", targetArg!!, "-mabi=aapcs", "-mthumb", "-mcpu=cortex-m4", "-ffunction-sections", "-fdata-sections",
+            is KonanTarget.ZEPHYR ->
+                listOf("-target", targetArg!!, "-ffunction-sections", "-fdata-sections",
                         "-Os", "-g",
                         "-fno-rtti",
                         "-fno-exceptions",
@@ -93,7 +93,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-isystem$absoluteTargetSysRoot/include/libcxx",
                         "-isystem$absoluteTargetSysRoot/lib/libcxxabi/include",
                         "-isystem$absoluteTargetSysRoot/include/compat",
-                        "-isystem$absoluteTargetSysRoot/include/libc")
+                        "-isystem$absoluteTargetSysRoot/include/libc") +
+                (configurables as ZephyrConfigurables).boardSpecificClangFlags
         }
         return result
     }
@@ -132,7 +133,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         KonanTarget.WASM32 ->
             listOf("-DKONAN_WASM=1", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1",
                     "-DKONAN_INTERNAL_DLMALLOC=1", "-DKONAN_INTERNAL_SNPRINTF=1", "-DKONAN_INTERNAL_NOW=1")
-        KonanTarget.ZEPHYR ->
+        is KonanTarget.ZEPHYR ->
             listOf("-D__ZEPHYR__=1", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1", 
             //"-DKONAN_INTERNAL_DLMALLOC=1",
             "-DKONAN_INTERNAL_SNPRINTF=1", "-DKONAN_INTERNAL_NOW=1")

@@ -53,7 +53,7 @@ fun loadConfigurables(target: KonanTarget, properties: Properties, baseDir: Stri
             MingwConfigurablesImpl(target, properties, baseDir)
         KonanTarget.WASM32 ->
             WasmConfigurablesImpl(target, properties, baseDir)
-        KonanTarget.ZEPHYR ->
+        is KonanTarget.ZEPHYR ->
             ZephyrConfigurablesImpl(target, properties, baseDir)
     }
 

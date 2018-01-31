@@ -593,6 +593,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }.toMap()
     }
 
+    private fun shouldExportFunction(descriptor: FunctionDescriptor) =
+            descriptor.usedAnnotation
+            || (context.isWasmTarget && descriptor.isExportedForCppRuntime())
+
     override fun visitFunction(declaration: IrFunction) {
         context.log{"visitFunction                  : ${ir2string(declaration)}"}
         val body = declaration.body
@@ -628,7 +632,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
 
 
-        if (declaration.descriptor.usedAnnotation) {
+        if (shouldExportFunction(declaration.descriptor)) {
             context.llvm.usedFunctions.add(codegen.llvmFunction(declaration.descriptor))
         }
 

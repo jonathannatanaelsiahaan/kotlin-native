@@ -593,10 +593,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }.toMap()
     }
 
-    private fun shouldExportFunction(descriptor: FunctionDescriptor) =
-            descriptor.usedAnnotation
-            || (context.isWasmTarget && descriptor.isExportedForCppRuntime())
-
     override fun visitFunction(declaration: IrFunction) {
         context.log{"visitFunction                  : ${ir2string(declaration)}"}
         val body = declaration.body
@@ -631,14 +627,17 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             }
         }
 
+        val descriptor = declaration.descriptor
 
-        if (shouldExportFunction(declaration.descriptor)) {
-            context.llvm.usedFunctions.add(codegen.llvmFunction(declaration.descriptor))
+        // Preserve symbol from deletion if needed
+        if (descriptor.usedAnnotation
+                || (context.isWasmTarget && descriptor.isExportedForCppRuntime())) {
+            context.llvm.usedFunctions += codegen.llvmFunction(descriptor)
         }
 
         if (context.shouldVerifyBitCode())
             verifyModule(context.llvmModule!!,
-                "${declaration.descriptor.containingDeclaration}::${ir2string(declaration)}")
+                "${descriptor.containingDeclaration}::${ir2string(declaration)}")
     }
 
     //-------------------------------------------------------------------------//
